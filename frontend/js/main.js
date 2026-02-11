@@ -60,9 +60,7 @@ function getInitials(name) {
     }
 }
 
-// ========================================
 // CARGAR ANIMES DESDE LA API
-// ========================================
 async function loadAnimesFromAPI(type) {
     try {
         const response = await fetch(`${API_BASE_URL}/animes/${type}`);
@@ -71,8 +69,9 @@ async function loadAnimesFromAPI(type) {
         }
         const data = await response.json();
         
-        if (data.success && Array.isArray(data.animes)) {
-            return data.animes;
+        // El backend devuelve 'processed' en lugar de 'animes'
+        if (data.success && Array.isArray(data.processed)) {
+            return data.processed;
         } else {
             console.error('Estructura de datos incorrecta:', data);
             return [];
