@@ -116,7 +116,7 @@ async function loadContentByType(type) {
     
     const contentTypeLabel = document.getElementById('contentTypeLabel');
     if (contentTypeLabel) {
-        contentTypeLabel.textContent = isAiring ? 'Animes en Emisión' : 'Animes Finalizados';
+        contentTypeLabel.textContent = isAiring ? '📺 Animes en Emisión' : '✅ Animes Finalizados';
     }
 
     // Mostrar loading
@@ -291,11 +291,11 @@ function updateDayStats() {
     if (!contentTypeLabel) return;
 
     if (currentDayFilter !== 'all' && currentContentType === 'airing') {
-        contentTypeLabel.textContent = `Animes del ${currentDayFilter}`;
+        contentTypeLabel.textContent = `📺 Animes del ${currentDayFilter}`;
     } else {
         contentTypeLabel.textContent = currentContentType === 'airing' 
-            ? 'Animes en Emisión' 
-            : 'Animes Finalizados';
+            ? '📺 Animes en Emisión' 
+            : '✅ Animes Finalizados';
     }
 }
 
@@ -374,10 +374,10 @@ function renderContent(page = 1, append = false) {
         contentCard.innerHTML = `
             <div class="content-poster">
                 ${isAiringItem ?
-                    '<div class="airing-badge">EN EMISIÓN</div>' :
-                    '<div class="finished-badge">FINALIZADO</div>'
+                    '<div class="airing-badge">📺 EN EMISIÓN</div>' :
+                    '<div class="finished-badge">✅ FINALIZADO</div>'
                 }
-                ${isAiringItem && anime.day ? `<div class="day-badge">${anime.day}</div>` : ''}
+                ${isAiringItem && anime.day ? `<div class="day-badge">📅 ${anime.day}</div>` : ''}
                 ${posterContent}
             </div>
             <div class="content-info">
@@ -387,9 +387,9 @@ function renderContent(page = 1, append = false) {
                 </span>
                 <h3 class="content-title">${item.cleanName}</h3>
                 <div class="content-meta">
-                    ${anime.score > 0 ? `<span><i class="fas fa-star"></i> ${anime.score.toFixed(1)}</span>` : ''}
-                    ${seasonCount > 0 ? `<span><i class="fas fa-layer-group"></i> ${seasonCount}T</span>` : ''}
-                    ${episodeCount > 0 ? `<span><i class="fas fa-play-circle"></i> ${episodeCount}E</span>` : ''}
+                    ${anime.score > 0 ? `<span title="Puntuación"><i class="fas fa-star"></i> ${anime.score.toFixed(1)}</span>` : ''}
+                    ${seasonCount > 0 ? `<span title="Temporadas"><i class="fas fa-layer-group"></i> ${seasonCount}T</span>` : ''}
+                    ${episodeCount > 0 ? `<span title="Episodios"><i class="fas fa-play-circle"></i> ${episodeCount}E</span>` : ''}
                 </div>
                 ${anime.genres && anime.genres.length > 0 ? `
                     <div class="content-genres">
@@ -511,23 +511,23 @@ async function showAnimeDetail(animeId) {
     document.getElementById('animeDetailEpisodes').textContent = 
         `${totalEpisodes} Episodio${totalEpisodes > 1 ? 's' : ''}`;
 
-    // Mostrar información de Jikan si está disponible
+    // Mostrar información traducida al español
     let description = anime.synopsis || `${anime.name} es ${anime.isAiring ? 'un anime actualmente en emisión' : 'un anime que ha finalizado su emisión'}. Disfruta de todos los episodios disponibles en nuestra plataforma.`;
 
     if (anime.genres && anime.genres.length > 0) {
-        description += `\n\n<strong>Géneros:</strong> ${anime.genres.join(', ')}`;
+        description += `\n\n<strong>🎭 Géneros:</strong> ${anime.genres.join(', ')}`;
     }
 
     if (anime.score > 0) {
-        description += `\n<strong>Puntuación:</strong> ${anime.score.toFixed(1)}/10 ⭐`;
+        description += `\n<strong>⭐ Puntuación:</strong> ${anime.score.toFixed(1)}/10`;
     }
 
     if (anime.status) {
-        description += `\n<strong>Estado:</strong> ${anime.status}`;
+        description += `\n<strong>📊 Estado:</strong> ${anime.status}`;
     }
 
     if (anime.rating && anime.rating !== 'N/A') {
-        description += `\n<strong>Clasificación:</strong> ${anime.rating}`;
+        description += `\n<strong>🔞 Clasificación:</strong> ${anime.rating}`;
     }
 
     document.getElementById('animeDetailDescription').innerHTML = description.replace(/\n/g, '<br>');
