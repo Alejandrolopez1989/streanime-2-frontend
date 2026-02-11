@@ -66,53 +66,53 @@
         const API_BASE_URL = 'https://streanime-2.vercel.app/api';
         
         async function loadVideo() {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get('token');
-            const episodeId = params.get('eid');
-            const title = params.get('title');
-            
-            if (!token || !episodeId) {
-                document.body.innerHTML = '<h2 style="color:red;text-align:center;padding:50px">Acceso denegado</h2>';
-                return;
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const episodeId = params.get('eid');
+    const title = params.get('title');
+    
+    if (!token || !episodeId) {
+        document.body.innerHTML = '<h2 style="color:red;text-align:center;padding:50px">Acceso denegado</h2>';
+        return;
+    }
+    
+    // Actualizar título de la página
+    if (title) {
+        document.getElementById('pageTitle').textContent = title;
+        document.title = title;
+    }
+    
+    try {
+        // Solicitar URL del video al backend
+        const res = await fetch(`${API_BASE_URL}/stream/${episodeId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-            
-            // Actualizar título de la página
-            if (title) {
-                document.getElementById('pageTitle').textContent = title;
-                document.title = title;
-            }
-            
-            try {
-                // Solicitar URL del video al backend
-                const res = await fetch(`${API_BASE_URL}/stream/${episodeId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                const data = await res.json();
-                
-                if (!data.success) {
-                    throw new Error(data.error || 'Error al cargar video');
-                }
-                
-                // Ocultar loading, mostrar player
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('playerContainer').style.display = 'block';
-                
-                // Cargar el video en el iframe
-                const videoPlayer = document.getElementById('videoPlayer');
-                videoPlayer.src = data.videoUrl;
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loading').innerHTML = `
-                    <i class="fas fa-exclamation-triangle" style="font-size:4rem;color:#ff3366;margin-bottom:20px;"></i>
-                    <h2>Error al cargar el video</h2>
-                    <p style="margin-top:10px;">${error.message}</p>
-                `;
-            }
+        });
+        
+        const data = await res.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Error al cargar video');
         }
+        
+        // Ocultar loading, mostrar player
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('playerContainer').style.display = 'block';
+        
+        // Cargar el video en el iframe
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = data.videoUrl;
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').innerHTML = `
+            <i class="fas fa-exclamation-triangle" style="font-size:4rem;color:#ff3366;margin-bottom:20px;"></i>
+            <h2>Error al cargar el video</h2>
+            <p style="margin-top:10px;">${error.message}</p>
+        `;
+    }
+}
         
         // Cargar video al iniciar
         window.addEventListener('DOMContentLoaded', loadVideo);
