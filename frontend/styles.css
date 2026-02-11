@@ -161,6 +161,17 @@ body.finished-mode .filter-controls {
     margin: 20px 0 40px;
     position: relative;
     z-index: 10;
+    flex-direction: row; /* Asegura orden izquierda-derecha */
+}
+
+/* Botón de EN EMISIÓN siempre a la izquierda */
+#airingBtn {
+    order: 1;
+}
+
+/* Botón de FINALIZADOS siempre a la derecha */
+#finishedBtn {
+    order: 2;
 }
 
 .type-selector-btn {
