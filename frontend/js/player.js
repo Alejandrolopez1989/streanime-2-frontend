@@ -12,7 +12,6 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     
     try {
         // 1. Obtener token de streaming
-        // Usar _ como separador en lugar de -
         const episodeId = `${animeId}_${seasonNum}_${episodeNum}`;
         
         const tokenRes = await fetch(`${API_BASE_URL}/stream/token`, {
@@ -27,7 +26,7 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
         
         const { token } = await tokenRes.json();
         
-        // 2. Abrir iframe con el token
+        // 2. Abrir iframe con el token (el iframe NO verá la URL real)
         const iframeUrl = `/player.html?token=${encodeURIComponent(token)}&eid=${encodeURIComponent(episodeId)}&title=${encodeURIComponent(`${animeName} - Episodio ${episodeNum}`)}`;
         playerIframe.src = iframeUrl;
         
