@@ -309,81 +309,70 @@ function getContentForPage(page = 1) {
 
 // Renderizar contenido en el grid
 function renderContent(page = 1, append = false) {
-    const contentToShow = getContentForPage(page);
-    
-    if (!append) {
-        contentGrid.innerHTML = '';
-        if (isInitialLoad && contentToShow.length === 0) {
-            contentGrid.innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Cargando animes...</p>
-                </div>
-            `;
-            return;
-        }
-    }
-
-    if (contentToShow.length === 0 && !append) {
-        contentGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <i class="fas fa-tv" style="font-size: 3rem; color: var(--danger-red); margin-bottom: 20px;"></i>
-                <h3>No se encontraron animes</h3>
-                <p>${currentDayFilter !== 'all' && currentContentType === 'airing' ? `No hay animes que se emitan los ${currentDayFilter}` : 'Intenta con otro término de búsqueda o filtro'}</p>
-            </div>
-        `;
-        showingContentSpan.textContent = '0';
-        updateLoadMoreButton();
-        return;
-    }
-
-    const totalShowing = append
-        ? document.querySelectorAll('.content-card').length + contentToShow.length
-        : contentToShow.length;
-    showingContentSpan.textContent = totalShowing;
-
     contentToShow.forEach(item => {
+    const anime = allAnimes.find(a => a.id === item.id);
+    if (!anime) return;
+    
+    const seasonCount = anime.seasons?.length || 0;
+    const episodeCount = anime.seasons?.reduce((sum, s) => sum + (s.episodes?.length || 0), 0) || 0;
+    const isAiringItem = anime.isAiring || false;
+    const hasImage = anime.image || anime.thumbnail;
+
+    const contentCard = document.createElement('div');
+    contentCard.className = 'content-card';
+    contentCard.dataset.type = 'animes';
+    contentCard.dataset.id = item.id;
+    contentCard.dataset.animeName = anime.name;
+
+    // Usar imagen de Jikan si está disponible, sino usar iniciales
+    let posterContent = '';
+    if (hasImage) {
+        posterContent = `<img src="${anime.image || anime.thumbnail}" alt="${anime.name}" class="poster-image" onerror="this.style.display='none'; this.parentElement.querySelector('.poster-placeholder').style.display='flex'">`;
+    } else {
         const bgColor = generateRedColorFromString(item.cleanName);
         const initials = getInitials(item.cleanName);
-        const anime = allAnimes.find(a => a.id === item.id);
-        const seasonCount = anime ? anime.seasons.length : 0;
-        const episodeCount = anime ? anime.totalEpisodes : 0;
-        const seasonInfoText = seasonCount > 0 ? `${seasonCount} Temporada${seasonCount !== 1 ? 's' : ''}` : '';
-        const episodeInfoText = episodeCount > 0 ? `${episodeCount} Episodio${episodeCount !== 1 ? 's' : ''}` : '';
-        const isAiringItem = anime ? anime.isAiring : false;
-
-        const contentCard = document.createElement('div');
-        contentCard.className = 'content-card';
-        contentCard.dataset.type = 'animes';
-        contentCard.dataset.id = item.id;
-        contentCard.dataset.animeName = anime.name;
-
-        contentCard.innerHTML = `
-            <div class="content-poster" style="background-color: ${bgColor};">
-                ${isAiringItem ?
-                    '<div class="airing-badge">EN EMISIÓN</div>' :
-                    '<div class="finished-badge">FINALIZADO</div>'
-                }
-                ${isAiringItem && anime && anime.day ? `<div class="day-badge">${anime.day}</div>` : ''}
-                <div class="poster-placeholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; font-weight: bold; color: white;">
-                    ${initials}
-                </div>
-            </div>
-            <div class="content-info">
-                <span class="content-type ${isAiringItem ? 'airing' : 'finished'}">
-                    <i class="fas ${isAiringItem ? 'fa-broadcast-tower' : 'fa-flag-checkered'}"></i>
-                    ${isAiringItem ? 'En Emisión' : 'Finalizado'}
-                </span>
-                <h3 class="content-title">${item.cleanName}</h3>
-                <div class="content-meta">
-                    ${seasonInfoText ? `<span><i class="fas fa-layer-group"></i> ${seasonInfoText}</span>` : ''}
-                    ${episodeInfoText ? `<span><i class="fas fa-play-circle"></i> ${episodeInfoText}</span>` : ''}
-                </div>
+        posterContent = `
+            <div class="poster-placeholder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3rem; font-weight: bold; color: white; background-color: ${bgColor};">
+                ${initials}
             </div>
         `;
+    }
 
-        contentGrid.appendChild(contentCard);
+    contentCard.innerHTML = `
+        <div class="content-poster">
+            ${isAiringItem ?
+                '<div class="airing-badge">EN EMISIÓN</div>' :
+                '<div class="finished-badge">FINALIZADO</div>'
+            }
+            ${isAiringItem && anime.day ? `<div class="day-badge">${anime.day}</div>` : ''}
+            ${posterContent}
+        </div>
+        <div class="content-info">
+            <span class="content-type ${isAiringItem ? 'airing' : 'finished'}">
+                <i class="fas ${isAiringItem ? 'fa-broadcast-tower' : 'fa-flag-checkered'}"></i>
+                ${isAiringItem ? 'En Emisión' : 'Finalizado'}
+            </span>
+            <h3 class="content-title">${item.cleanName}</h3>
+            <div class="content-meta">
+                ${anime.score > 0 ? `<span><i class="fas fa-star"></i> ${anime.score.toFixed(1)}</span>` : ''}
+                ${seasonCount > 0 ? `<span><i class="fas fa-layer-group"></i> ${seasonCount}T</span>` : ''}
+                ${episodeCount > 0 ? `<span><i class="fas fa-play-circle"></i> ${episodeCount}E</span>` : ''}
+            </div>
+            ${anime.genres && anime.genres.length > 0 ? `
+                <div class="content-genres">
+                    ${anime.genres.slice(0, 3).map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    contentCard.addEventListener('click', () => {
+        console.log('🔍 Clic en tarjeta:', item.id);
+        showAnimeDetail(item.id);
     });
+
+    contentGrid.appendChild(contentCard);
+});
 
     isInitialLoad = false;
     updateLoadMoreButton();
