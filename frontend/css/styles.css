@@ -879,6 +879,69 @@ footer p {
     box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
 }
 
+/* Player Modal */
+.player-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.player-container {
+    width: 90%;
+    max-width: 1200px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--danger-red);
+}
+
+.player-header {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--danger-red);
+}
+
+.player-header h2 {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.close-player {
+    background: var(--danger-red);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s;
+}
+
+.close-player:hover {
+    background: var(--highlight-color);
+}
+
+.player-iframe-container {
+    width: 100%;
+    height: 600px;
+}
+
+.player-iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 /* ==================== RESPONSIVE ==================== */
 
 /* Tablets (768px - 1024px) */
@@ -888,22 +951,22 @@ footer p {
         align-items: center;
         text-align: center;
     }
-    
+
     .anime-poster {
         width: 280px;
         height: 420px;
         margin-bottom: 20px;
     }
-    
+
     .anime-info {
         text-align: center;
     }
-    
+
     .anime-meta {
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .content-grid {
         grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
         gap: 20px;
@@ -917,35 +980,35 @@ footer p {
         gap: 15px;
         padding: 12px;
     }
-    
+
     .logo {
         justify-content: center;
         width: 100%;
     }
-    
+
     .logo i {
         font-size: 2rem;
     }
-    
+
     .logo h1 {
         font-size: 1.5rem;
     }
-    
+
     .nav-controls {
         width: 100%;
     }
-    
+
     .search-box {
         max-width: 100%;
     }
-    
+
     /* BOTONES UNO AL LADO DEL OTRO EN MÓVILES */
     .content-type-selector {
         flex-direction: row;
         gap: 10px;
         margin: 15px 0 30px;
     }
-    
+
     .type-selector-btn {
         padding: 10px 15px;
         font-size: 0.95rem;
@@ -954,65 +1017,65 @@ footer p {
         justify-content: center;
         white-space: nowrap;
     }
-    
+
     .type-selector-btn i {
         font-size: 1.1rem;
     }
-    
+
     .airing-header h2 {
         font-size: 1.8rem;
     }
-    
+
     .airing-header p {
         font-size: 1rem;
     }
-    
+
     .stats {
         flex-direction: column;
         text-align: center;
         gap: 10px;
         padding: 15px;
     }
-    
+
     .filter-controls {
         justify-content: center;
         gap: 6px;
     }
-    
+
     .filter-btn {
         padding: 5px 10px;
         font-size: 0.8rem;
     }
-    
+
     .content-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
     }
-    
+
     .content-poster {
         height: 280px;
     }
-    
+
     .anime-title {
         font-size: 2rem;
     }
-    
+
     .episodes-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
     }
-    
+
     .back-to-top {
         bottom: 20px;
         right: 20px;
         width: 45px;
         height: 45px;
     }
-    
+
     .days-buttons {
         gap: 8px;
     }
-    
+
     .day-btn {
         padding: 8px 16px;
         font-size: 0.95rem;
@@ -1021,79 +1084,75 @@ footer p {
 
 /* Móviles (480px - 576px) */
 @media (max-width: 576px) {
-    body:not(.detail-page) {
-        padding-top: 140px; /* Más espacio para que los botones no sean tapados */
-    }
-    
     .content-type-selector {
         gap: 8px;
         margin: 10px 0 25px;
     }
-    
+
     .type-selector-btn {
         padding: 8px 12px;
         font-size: 0.9rem;
         min-height: 40px;
     }
-    
+
     .type-selector-btn i {
         font-size: 1rem;
     }
-    
+
     .airing-header {
         padding: 15px;
         margin: 15px 0;
     }
-    
+
     .airing-header h2 {
         font-size: 1.5rem;
         gap: 10px;
     }
-    
+
     .airing-header p {
         font-size: 0.95rem;
     }
-    
+
     .content-grid {
         grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     }
-    
+
     .content-poster {
         height: 250px;
     }
-    
+
     .anime-header {
         padding: 20px;
         gap: 20px;
     }
-    
+
     .anime-poster {
         width: 250px;
         height: 375px;
     }
-    
+
     .anime-title {
         font-size: 1.8rem;
     }
-    
+
     .season-card {
         padding: 20px;
     }
-    
+
     .episodes-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    
+
     .filter-controls {
         gap: 6px;
     }
-    
+
     .filter-btn {
         padding: 6px 12px;
         font-size: 0.85rem;
     }
-    
+
     .day-btn {
         padding: 8px 14px;
         font-size: 0.9rem;
@@ -1102,42 +1161,38 @@ footer p {
 
 /* Móviles pequeños (hasta 480px) */
 @media (max-width: 480px) {
-    body:not(.detail-page) {
-        padding-top: 150px; /* Aún más espacio para móviles muy pequeños */
-    }
-    
     .container {
         padding: 0 15px;
     }
-    
+
     .header-content {
         padding: 10px;
     }
-    
+
     .logo {
         gap: 10px;
     }
-    
+
     .logo i {
         font-size: 1.8rem;
     }
-    
+
     .logo h1 {
         font-size: 1.4rem;
     }
-    
+
     .search-box input {
         padding: 10px 15px;
         font-size: 0.95rem;
     }
-    
+
     /* BOTONES SIEMPRE UNO AL LADO DEL OTRO */
     .content-type-selector {
         flex-direction: row;
         gap: 6px;
         margin: 10px 0 20px;
     }
-    
+
     .type-selector-btn {
         padding: 8px 10px;
         font-size: 0.85rem;
@@ -1146,70 +1201,70 @@ footer p {
         word-wrap: break-word;
         line-height: 1.2;
     }
-    
+
     .type-selector-btn i {
         font-size: 0.9rem;
     }
-    
+
     .airing-header {
         padding: 12px;
     }
-    
+
     .airing-header h2 {
         font-size: 1.3rem;
     }
-    
+
     .airing-header p {
         font-size: 0.9rem;
     }
-    
+
     .content-grid {
         grid-template-columns: 1fr;
         gap: 15px;
     }
-    
+
     .content-poster {
         height: 300px;
     }
-    
+
     .anime-poster {
         width: 100%;
         max-width: 250px;
         height: 375px;
     }
-    
+
     .anime-title {
         font-size: 1.6rem;
     }
-    
+
     .anime-meta {
         flex-direction: column;
         align-items: center;
         gap: 8px;
     }
-    
+
     .season-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
-    
+
     .episodes-grid {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    
+
     .back-to-top {
         bottom: 15px;
         right: 15px;
         width: 40px;
         height: 40px;
     }
-    
+
     .days-buttons {
         justify-content: space-between;
     }
-    
+
     .day-btn {
         flex: 1;
         min-width: calc(50% - 5px);
@@ -1218,13 +1273,13 @@ footer p {
         padding: 8px 10px;
         font-size: 0.85rem;
     }
-    
+
     .filter-controls {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
     }
-    
+
     .filter-btn {
         text-align: center;
         padding: 6px 8px;
@@ -1234,42 +1289,38 @@ footer p {
 
 /* Móviles extra pequeños (hasta 360px) */
 @media (max-width: 360px) {
-    body:not(.detail-page) {
-        padding-top: 160px;
-    }
-    
     .logo h1 {
         font-size: 1.2rem;
     }
-    
+
     .content-type-selector {
         flex-direction: row;
         gap: 4px;
     }
-    
+
     .type-selector-btn {
         padding: 6px 8px;
         font-size: 0.8rem;
         min-height: 36px;
     }
-    
+
     .type-selector-btn i {
         font-size: 0.8rem;
     }
-    
+
     .airing-header h2 {
         font-size: 1.2rem;
     }
-    
+
     .content-poster {
         height: 280px;
     }
-    
+
     .day-btn {
         font-size: 0.8rem;
         padding: 6px 8px;
     }
-    
+
     .filter-btn {
         font-size: 0.75rem;
         padding: 5px 6px;
