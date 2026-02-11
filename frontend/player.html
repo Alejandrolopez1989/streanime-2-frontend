@@ -63,67 +63,57 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://streanime-2.vercel.app/api';
-        
-        async function loadVideo() {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const episodeId = params.get('eid');
-    const title = params.get('title');
+    const API_BASE_URL = 'https://streanime-2.vercel.app/api';
     
-    if (!token || !episodeId) {
-        document.body.innerHTML = '<h2 style="color:red;text-align:center;padding:50px">Acceso denegado</h2>';
-        return;
-    }
-    
-    // Actualizar título de la página
-    if (title) {
-        document.getElementById('pageTitle').textContent = title;
-        document.title = title;
-    }
-    
-    try {
-        // Solicitar URL del video al backend
-        const res = await fetch(`${API_BASE_URL}/stream/${episodeId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+    async function loadVideo() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        const episodeId = params.get('eid');
+        const title = params.get('title');
         
-        const data = await res.json();
-        
-        if (!data.success) {
-            throw new Error(data.error || 'Error al cargar video');
+        if (!token || !episodeId) {
+            document.body.innerHTML = '<h2 style="color:red;text-align:center;padding:50px">Acceso denegado</h2>';
+            return;
         }
         
-        // Ocultar loading, mostrar player
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('playerContainer').style.display = 'block';
+        // Actualizar título de la página
+        if (title) {
+            document.getElementById('pageTitle').textContent = title;
+            document.title = title;
+        }
         
-        // Cargar el video en el iframe
-        const videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = data.videoUrl;
-        
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').innerHTML = `
-            <i class="fas fa-exclamation-triangle" style="font-size:4rem;color:#ff3366;margin-bottom:20px;"></i>
-            <h2>Error al cargar el video</h2>
-            <p style="margin-top:10px;">${error.message}</p>
-        `;
+        try {
+            // Solicitar URL del video al backend (el backend redirigirá al video real)
+            const proxyUrl = `${API_BASE_URL}/proxy/video/${episodeId}?token=${encodeURIComponent(token)}`;
+            
+            // Ocultar loading, mostrar player
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('playerContainer').style.display = 'block';
+            
+            // Cargar el video a través del proxy (la URL real NO se ve en el inspector)
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.src = proxyUrl;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('loading').innerHTML = `
+                <i class="fas fa-exclamation-triangle" style="font-size:4rem;color:#ff3366;margin-bottom:20px;"></i>
+                <h2>Error al cargar el video</h2>
+                <p style="margin-top:10px;">${error.message}</p>
+            `;
+        }
     }
-}
-        
-        // Cargar video al iniciar
-        window.addEventListener('DOMContentLoaded', loadVideo);
-        
-        // Bloquear inspección (básico)
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    </script>
+    
+    // Cargar video al iniciar
+    window.addEventListener('DOMContentLoaded', loadVideo);
+    
+    // Bloquear inspección (básico)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
 </body>
 </html>
