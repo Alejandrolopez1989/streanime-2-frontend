@@ -1,7 +1,7 @@
 // ========================================
-// CONFIGURACIÓN
+// CONFIGURACIÓN DE LA API
 // ========================================
-const API_BASE_URL = 'https://streanime-backend.vercel.app/api';
+const API_BASE_URL = 'https://streanime-2.vercel.app/api';
 // Para desarrollo local: const API_BASE_URL = 'http://localhost:3000/api';
 
 // ========================================
@@ -73,5 +73,7 @@ function setupEpisodeClicks() {
     });
 }
 
-// Inicializar
+// ========================================
+// INICIALIZAR
+// ========================================
 setupEpisodeClicks();
