@@ -12,7 +12,8 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     
     try {
         // 1. Obtener token de streaming
-        const episodeId = `${animeId}-${seasonNum}-${episodeNum}`;
+        // Usar _ como separador en lugar de -
+        const episodeId = `${animeId}_${seasonNum}_${episodeNum}`;
         
         const tokenRes = await fetch(`${API_BASE_URL}/stream/token`, {
             method: 'POST',
