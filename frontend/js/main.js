@@ -511,7 +511,21 @@ async function showAnimeDetail(animeId) {
     document.getElementById('animeDetailEpisodes').textContent = 
         `${totalEpisodes} Episodio${totalEpisodes > 1 ? 's' : ''}`;
 
-    // Mostrar información traducida al español
+    // Mostrar imagen del anime (¡IMPORTANTE!)
+    const posterImg = document.getElementById('animeDetailPoster');
+    if (posterImg) {
+        if (anime.image) {
+            posterImg.src = anime.image;
+            posterImg.alt = anime.name;
+            posterImg.style.display = 'block';
+            posterImg.parentElement.querySelector('.poster-placeholder')?.style.display = 'none';
+        } else {
+            posterImg.style.display = 'none';
+            posterImg.parentElement.querySelector('.poster-placeholder')?.style.display = 'flex';
+        }
+    }
+
+    // Mostrar información de Jikan si está disponible
     let description = anime.synopsis || `${anime.name} es ${anime.isAiring ? 'un anime actualmente en emisión' : 'un anime que ha finalizado su emisión'}. Disfruta de todos los episodios disponibles en nuestra plataforma.`;
 
     if (anime.genres && anime.genres.length > 0) {
