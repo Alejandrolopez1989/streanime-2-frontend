@@ -609,7 +609,7 @@ function init() {
     setupEventListeners();
     setupBackToTop();
     setupYearFilterListeners();
-    loadContentByType('finished'); // Cargar finalizados por defecto
+    loadContentByType('airing'); // ✅ Cargar EN EMISIÓN por defecto
     console.log("✅ Aplicación inicializada correctamente");
 }
 
