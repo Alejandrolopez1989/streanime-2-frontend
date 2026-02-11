@@ -63,7 +63,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://streanime-backend.vercel.app/api';
+        const API_BASE_URL = 'https://streanime-2.vercel.app/api';
         
         async function loadVideo() {
             const params = new URLSearchParams(window.location.search);
@@ -116,6 +116,14 @@
         
         // Cargar video al iniciar
         window.addEventListener('DOMContentLoaded', loadVideo);
+        
+        // Bloquear inspección (básico)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                return false;
+            }
+        });
     </script>
 </body>
 </html>
