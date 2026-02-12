@@ -1,13 +1,4 @@
 // ========================================
-// CONFIGURACIÓN DE LA API
-// ========================================
-const API_BASE_URL = 'https://streanime-2.vercel.app/api';
-// Para desarrollo local: const API_BASE_URL = 'http://localhost:3000/api';
-
-// NOTA: isHandlingPopState y playerModalOpen están declaradas en main.js
-// No se redeclaran aquí para evitar errores de sintaxis
-
-// ========================================
 // ABRIR REPRODUCTOR SEGURO CON GESTIÓN DE HISTORIAL
 // ========================================
 async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
