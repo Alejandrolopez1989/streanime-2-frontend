@@ -4,9 +4,8 @@
 const API_BASE_URL = 'https://streanime-2.vercel.app/api';
 // Para desarrollo local: const API_BASE_URL = 'http://localhost:3000/api';
 
-// Bandera para evitar bucles infinitos en el historial
-let isHandlingPopState = false;
-let playerModalOpen = false;
+// NOTA: isHandlingPopState y playerModalOpen están declaradas en main.js
+// No se redeclaran aquí para evitar errores de sintaxis
 
 // ========================================
 // ABRIR REPRODUCTOR SEGURO CON GESTIÓN DE HISTORIAL
@@ -19,7 +18,7 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     // Mostrar modal
     playerModal.style.display = 'flex';
     playerTitle.textContent = `${animeName} - Episodio ${episodeNum}`;
-    playerModalOpen = true;
+    playerModalOpen = true; // Usa variable global de main.js
     
     try {
         // 1. Obtener token de streaming
@@ -72,7 +71,7 @@ function closePlayer() {
     
     playerIframe.src = '';
     playerModal.style.display = 'none';
-    playerModalOpen = false;
+    playerModalOpen = false; // Usa variable global de main.js
     
     // Eliminar el estado del player del historial SIN navegar
     if (window.history.state && window.history.state.page === 'player') {
@@ -86,11 +85,11 @@ function closePlayer() {
 function setupPlayerHistory() {
     window.addEventListener('popstate', function(event) {
         // Evitar bucles infinitos
-        if (isHandlingPopState) return;
+        if (isHandlingPopState) return; // Usa variable global de main.js
         
         // Si el estado actual es 'player', cerrar el modal
         if (event.state && event.state.page === 'player') {
-            isHandlingPopState = true;
+            isHandlingPopState = true; // Usa variable global de main.js
             closePlayer();
             setTimeout(() => { isHandlingPopState = false; }, 100);
             return;
