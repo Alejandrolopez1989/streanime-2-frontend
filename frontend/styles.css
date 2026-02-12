@@ -187,12 +187,19 @@ body.finished-mode .filter-controls {
     transform: translateY(-5px);
 }
 
-.type-selector-btn.active.finished {
-    background-color: var(--finished-color);
+/* Botón activo - MISMO TONO DE ROJO PARA AMBOS */
+.type-selector-btn.active {
+    background-color: var(--airing-color) !important; /* Rojo brillante #ff3333 para ambos */
+    color: white;
+    border-color: var(--danger-red);
+    box-shadow: 0 5px 20px rgba(255, 0, 0, 0.3);
+    transform: translateY(-5px);
 }
 
+/* Eliminar reglas específicas que sobrescriben el color */
+.type-selector-btn.active.finished,
 .type-selector-btn.active.airing {
-    background-color: var(--airing-color);
+    background-color: var(--airing-color) !important;
 }
 
 .type-selector-btn:hover:not(.active) {
