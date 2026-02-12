@@ -9,7 +9,7 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     // Mostrar modal
     playerModal.style.display = 'flex';
     playerTitle.textContent = `${animeName} - Episodio ${episodeNum}`;
-    
+    playerModalOpen = true; // Usa variable global de main.js
     try {
         // 1. Obtener token de streaming
         const episodeId = `${animeId}_${seasonNum}_${episodeNum}`;
