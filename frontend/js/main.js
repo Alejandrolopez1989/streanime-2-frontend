@@ -649,7 +649,9 @@ function backToAnimes() {
     currentAnime = null;
     
     // Eliminar hash del anime del historial
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
+    if (window.location.hash.startsWith('#anime-')) {
+        history.replaceState({ page: 'main' }, '', window.location.pathname);
+    }
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
