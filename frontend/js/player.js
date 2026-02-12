@@ -1,5 +1,5 @@
 // ========================================
-// ABRIR REPRODUCTOR SEGURO
+// ABRIR REPRODUCTOR SEGURO CON GESTIÓN DE HISTORIAL
 // ========================================
 async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     const playerModal = document.getElementById('playerModal');
@@ -10,6 +10,7 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
     playerModal.style.display = 'flex';
     playerTitle.textContent = `${animeName} - Episodio ${episodeNum}`;
     playerModalOpen = true; // Usa variable global de main.js
+    
     try {
         // 1. Obtener token de streaming
         const episodeId = `${animeId}_${seasonNum}_${episodeNum}`;
@@ -26,14 +27,20 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
         
         const { token } = await tokenRes.json();
         
-        // 2. Abrir iframe con el token
+        // 2. ABRIR IFRAME Y AGREGAR ESTADO AL HISTORIAL
         const iframeUrl = `/player.html?token=${encodeURIComponent(token)}&eid=${encodeURIComponent(episodeId)}&title=${encodeURIComponent(`${animeName} - Episodio ${episodeNum}`)}`;
         playerIframe.src = iframeUrl;
         
-        // 3. Agregar hash al historial (solo si no existe)
-        if (!window.location.hash.includes('#player-')) {
+        // 3. PUSH AL HISTORIAL PARA PODER CERRAR CON BOTÓN ATRÁS
+        if (!window.history.state || window.history.state.page !== 'player') {
             history.pushState(
-                { page: 'player' }, 
+                { 
+                    page: 'player', 
+                    animeId, 
+                    seasonNum, 
+                    episodeNum,
+                    title: `${animeName} - Episodio ${episodeNum}`
+                }, 
                 '', 
                 `#player-${animeId}-${seasonNum}-${episodeNum}`
             );
@@ -47,7 +54,7 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
 }
 
 // ========================================
-// CERRAR REPRODUCTOR
+// CERRAR REPRODUCTOR (SIN AFFECTAR HISTORIAL)
 // ========================================
 function closePlayer() {
     const playerModal = document.getElementById('playerModal');
@@ -55,16 +62,44 @@ function closePlayer() {
     
     playerIframe.src = '';
     playerModal.style.display = 'none';
+    playerModalOpen = false; // Usa variable global de main.js
     
-    // Eliminar hash del player SIN agregar nuevo estado
-    if (window.location.hash.startsWith('#player-')) {
-        // Reemplazar el estado actual para eliminar el hash
-        history.replaceState(
-            window.history.state || { page: 'detail' }, 
-            '', 
-            window.location.pathname + window.location.search
-        );
+    // Eliminar el estado del player del historial SIN navegar
+    if (window.history.state && window.history.state.page === 'player') {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
     }
+}
+
+// ========================================
+// MANEJAR EVENTO DE HISTORIAL (BOTÓN ATRÁS)
+// ========================================
+function setupPlayerHistory() {
+    window.addEventListener('popstate', function(event) {
+        // Evitar bucles infinitos
+        if (isHandlingPopState) return; // Usa variable global de main.js
+        
+        // Si el estado actual es 'player', cerrar el modal
+        if (event.state && event.state.page === 'player') {
+            isHandlingPopState = true; // Usa variable global de main.js
+            closePlayer();
+            setTimeout(() => { isHandlingPopState = false; }, 100);
+            return;
+        }
+        
+        // Si estamos en el modal pero el estado no es 'player', cerrarlo
+        if (playerModalOpen && (!event.state || event.state.page !== 'player')) {
+            isHandlingPopState = true;
+            closePlayer();
+            setTimeout(() => { isHandlingPopState = false; }, 100);
+        }
+    });
+    
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && playerModalOpen) {
+            closePlayer();
+        }
+    });
 }
 
 // ========================================
@@ -87,24 +122,14 @@ function setupEpisodeClicks() {
 }
 
 // ========================================
-// CERRAR CON TECLA ESCAPE
+// INICIALIZAR
 // ========================================
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && document.getElementById('playerModal').style.display === 'flex') {
-        closePlayer();
-    }
-});
+setupEpisodeClicks();
+setupPlayerHistory();
 
-// ========================================
-// CERRAR AL HACER CLIC FUERA DEL MODAL
-// ========================================
+// Cerrar modal si se hace clic fuera del contenedor
 document.getElementById('playerModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
         closePlayer();
     }
 });
-
-// ========================================
-// INICIALIZAR
-// ========================================
-setupEpisodeClicks();
