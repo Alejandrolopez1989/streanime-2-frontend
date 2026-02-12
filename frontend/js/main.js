@@ -18,10 +18,6 @@ let currentAnime = null;
 let currentDayFilter = 'all';
 let currentContentType = 'airing'; // 'finished' o 'airing'
 
-// Variables compartidas con player.js (¡ES IMPRESCINDIBLE!)
-let isHandlingPopState = false; // Bandera para evitar bucles en el historial
-let playerModalOpen = false;    // Estado del modal del reproductor
-
 // ========================================
 // DOM Elements
 // ========================================
