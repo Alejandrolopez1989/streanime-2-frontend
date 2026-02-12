@@ -651,7 +651,12 @@ function backToAnimes() {
     animeDetailSection.style.display = 'none';
     breadcrumb.style.display = 'none';
     currentAnime = null;
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
+    
+    // Actualizar historial SIN agregar nuevo estado
+    if (window.history.state && window.history.state.page === 'detail') {
+        history.replaceState({ page: 'main' }, '', window.location.pathname);
+    }
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
