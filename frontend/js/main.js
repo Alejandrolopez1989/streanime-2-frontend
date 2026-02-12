@@ -826,23 +826,49 @@ function setupBackToTop() {
 // Configurar manejo del historial
 function setupHistoryManagement() {
     window.addEventListener('popstate', function(event) {
+        // Evitar conflictos con el player
+        if (isHandlingPopState) return;
+        
+        // Si estamos en la página de detalle y el estado es 'detail'
         if (document.body.classList.contains('detail-page')) {
-            backToAnimes();
+            if (!event.state || event.state.page !== 'player') {
+                backToAnimes();
+                return;
+            }
+        }
+        
+        // Si estamos en la página principal y hay un player abierto
+        if (!document.body.classList.contains('detail-page') && playerModalOpen) {
+            closePlayer();
         }
     });
 
-    if (window.location.hash && window.location.hash.startsWith('#anime-')) {
-        const animeId = window.location.hash.replace('#anime-', '');
-        setTimeout(() => {
-            const anime = allAnimes.find(a => a.id === animeId);
-            if (anime) {
-                history.replaceState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
-                showAnimeDetail(animeId);
-            }
-        }, 500);
+    // Manejar carga inicial con hash
+    if (window.location.hash) {
+        if (window.location.hash.startsWith('#anime-')) {
+            const animeId = window.location.hash.replace('#anime-', '');
+            setTimeout(() => {
+                const anime = allAnimes.find(a => a.id === animeId);
+                if (anime) {
+                    // No reemplazar estado si ya estamos en la página de detalle
+                    if (!window.history.state || window.history.state.page !== 'detail') {
+                        history.replaceState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
+                    }
+                    showAnimeDetail(animeId);
+                }
+            }, 300);
+        } else if (window.location.hash.startsWith('#player-')) {
+            // Si hay un player en el hash, cerrarlo inmediatamente
+            setTimeout(() => {
+                if (playerModalOpen) closePlayer();
+            }, 100);
+        }
     }
 
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
+    // Estado inicial solo si no hay hash
+    if (!window.location.hash) {
+        history.replaceState({ page: 'main' }, '', window.location.pathname);
+    }
 }
 
 // ========================================
