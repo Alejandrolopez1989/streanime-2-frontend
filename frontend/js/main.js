@@ -489,9 +489,7 @@ async function showAnimeDetail(animeId) {
     console.log('✅ Anime encontrado:', anime.name);
     
     currentAnime = anime;
-    if (!window.location.hash.includes(`#anime-${animeId}`)) {
     history.pushState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
-}
 
     // Cambiar a modo detalle
     document.body.classList.add('detail-page');
@@ -654,10 +652,8 @@ function backToAnimes() {
     breadcrumb.style.display = 'none';
     currentAnime = null;
     
-    // Eliminar hash del anime SIN agregar nuevo estado
-    if (window.location.hash.startsWith('#anime-')) {
-        history.replaceState({ page: 'main' }, '', window.location.pathname);
-    }
+    // Eliminar hash del anime del historial
+    history.replaceState({ page: 'main' }, '', window.location.pathname);
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -837,32 +833,22 @@ function setupBackToTop() {
 // Configurar manejo del historial
 function setupHistoryManagement() {
     window.addEventListener('popstate', function(event) {
-        // Si estamos en la página de detalle y el hash cambia, volver al listado
+        // Si estamos en la página de detalle, volver al listado
         if (document.body.classList.contains('detail-page')) {
-            // Verificar si el hash ya no es de anime
-            if (!window.location.hash.startsWith('#anime-')) {
-                backToAnimes();
-            }
+            backToAnimes();
             return;
-        }
-        
-        // Si estamos en el listado y hay un player abierto, cerrarlo
-        if (document.getElementById('playerModal').style.display === 'flex') {
-            closePlayer();
         }
     });
 
     // Manejar carga inicial con hash
-    if (window.location.hash) {
-        if (window.location.hash.startsWith('#anime-')) {
-            const animeId = window.location.hash.replace('#anime-', '');
-            setTimeout(() => {
-                const anime = allAnimes.find(a => a.id === animeId);
-                if (anime) {
-                    showAnimeDetail(animeId);
-                }
-            }, 300);
-        }
+    if (window.location.hash && window.location.hash.startsWith('#anime-')) {
+        const animeId = window.location.hash.replace('#anime-', '');
+        setTimeout(() => {
+            const anime = allAnimes.find(a => a.id === animeId);
+            if (anime) {
+                showAnimeDetail(animeId);
+            }
+        }, 300);
     }
 }
 
