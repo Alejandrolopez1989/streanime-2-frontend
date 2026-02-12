@@ -18,10 +18,6 @@ let currentAnime = null;
 let currentDayFilter = 'all';
 let currentContentType = 'airing'; // 'finished' o 'airing'
 
-// Variables compartidas con player.js (para gestión de historial)
-let isHandlingPopState = false; // Bandera para evitar bucles
-let playerModalOpen = false;    // Estado del modal del player
-
 // ========================================
 // DOM Elements
 // ========================================
@@ -515,7 +511,7 @@ async function showAnimeDetail(animeId) {
     document.getElementById('animeDetailEpisodes').textContent = 
         `${totalEpisodes} Episodio${totalEpisodes > 1 ? 's' : ''}`;
 
-    // CORREGIDO: Mostrar imagen del anime SIN optional chaining
+    // Mostrar imagen del anime
     const posterImg = document.getElementById('animeDetailPoster');
     if (posterImg && anime.image) {
         posterImg.src = anime.image;
@@ -652,10 +648,8 @@ function backToAnimes() {
     breadcrumb.style.display = 'none';
     currentAnime = null;
     
-    // Actualizar historial SIN agregar nuevo estado
-    if (window.history.state && window.history.state.page === 'detail') {
-        history.replaceState({ page: 'main' }, '', window.location.pathname);
-    }
+    // Eliminar hash del anime del historial
+    history.replaceState({ page: 'main' }, '', window.location.pathname);
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -835,48 +829,22 @@ function setupBackToTop() {
 // Configurar manejo del historial
 function setupHistoryManagement() {
     window.addEventListener('popstate', function(event) {
-        // Evitar conflictos con el player
-        if (isHandlingPopState) return;
-        
-        // Si estamos en la página de detalle y el estado es 'detail'
+        // Si estamos en la página de detalle, volver al listado
         if (document.body.classList.contains('detail-page')) {
-            if (!event.state || event.state.page !== 'player') {
-                backToAnimes();
-                return;
-            }
-        }
-        
-        // Si estamos en la página principal y hay un player abierto
-        if (!document.body.classList.contains('detail-page') && playerModalOpen) {
-            closePlayer();
+            backToAnimes();
+            return;
         }
     });
 
     // Manejar carga inicial con hash
-    if (window.location.hash) {
-        if (window.location.hash.startsWith('#anime-')) {
-            const animeId = window.location.hash.replace('#anime-', '');
-            setTimeout(() => {
-                const anime = allAnimes.find(a => a.id === animeId);
-                if (anime) {
-                    // No reemplazar estado si ya estamos en la página de detalle
-                    if (!window.history.state || window.history.state.page !== 'detail') {
-                        history.replaceState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
-                    }
-                    showAnimeDetail(animeId);
-                }
-            }, 300);
-        } else if (window.location.hash.startsWith('#player-')) {
-            // Si hay un player en el hash, cerrarlo inmediatamente
-            setTimeout(() => {
-                if (playerModalOpen) closePlayer();
-            }, 100);
-        }
-    }
-
-    // Estado inicial solo si no hay hash
-    if (!window.location.hash) {
-        history.replaceState({ page: 'main' }, '', window.location.pathname);
+    if (window.location.hash && window.location.hash.startsWith('#anime-')) {
+        const animeId = window.location.hash.replace('#anime-', '');
+        setTimeout(() => {
+            const anime = allAnimes.find(a => a.id === animeId);
+            if (anime) {
+                showAnimeDetail(animeId);
+            }
+        }, 300);
     }
 }
 
