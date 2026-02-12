@@ -511,7 +511,7 @@ async function showAnimeDetail(animeId) {
     document.getElementById('animeDetailEpisodes').textContent = 
         `${totalEpisodes} Episodio${totalEpisodes > 1 ? 's' : ''}`;
 
-    // CORREGIDO: Mostrar imagen del anime SIN optional chaining
+    // Mostrar imagen del anime
     const posterImg = document.getElementById('animeDetailPoster');
     if (posterImg && anime.image) {
         posterImg.src = anime.image;
@@ -647,7 +647,12 @@ function backToAnimes() {
     animeDetailSection.style.display = 'none';
     breadcrumb.style.display = 'none';
     currentAnime = null;
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
+    
+    // Eliminar hash del anime del historial
+    if (window.location.hash.startsWith('#anime-')) {
+        history.replaceState({ page: 'main' }, '', window.location.pathname);
+    }
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -703,18 +708,29 @@ function setupTypeSelector() {
     if (finishedBtn && airingBtn) {
         finishedBtn.addEventListener('click', () => {
             if (currentContentType === 'finished') return;
-            finishedBtn.classList.remove('active');
-            finishedBtn.classList.add('finished');
-            airingBtn.classList.remove('airing');
-            airingBtn.classList.add('active', 'airing');
-            loadContentByType('finished');
-        });
-        airingBtn.addEventListener('click', () => {
-            if (currentContentType === 'airing') return;
-            airingBtn.classList.remove('active');
-            airingBtn.classList.add('airing');
+            
+            // Quitar clases del botón de emisión
+            airingBtn.classList.remove('active', 'airing');
+            airingBtn.classList.add('finished');
+            
+            // Añadir clases al botón de finalizados
             finishedBtn.classList.remove('finished');
             finishedBtn.classList.add('active', 'finished');
+            
+            loadContentByType('finished');
+        });
+        
+        airingBtn.addEventListener('click', () => {
+            if (currentContentType === 'airing') return;
+            
+            // Quitar clases del botón de finalizados
+            finishedBtn.classList.remove('active', 'finished');
+            finishedBtn.classList.add('airing');
+            
+            // Añadir clases al botón de emisión
+            airingBtn.classList.remove('finished');
+            airingBtn.classList.add('active', 'airing');
+            
             loadContentByType('airing');
         });
     }
@@ -815,23 +831,23 @@ function setupBackToTop() {
 // Configurar manejo del historial
 function setupHistoryManagement() {
     window.addEventListener('popstate', function(event) {
+        // Si estamos en la página de detalle, volver al listado
         if (document.body.classList.contains('detail-page')) {
             backToAnimes();
+            return;
         }
     });
 
+    // Manejar carga inicial con hash
     if (window.location.hash && window.location.hash.startsWith('#anime-')) {
         const animeId = window.location.hash.replace('#anime-', '');
         setTimeout(() => {
             const anime = allAnimes.find(a => a.id === animeId);
             if (anime) {
-                history.replaceState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
                 showAnimeDetail(animeId);
             }
-        }, 500);
+        }, 300);
     }
-
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
 }
 
 // ========================================
