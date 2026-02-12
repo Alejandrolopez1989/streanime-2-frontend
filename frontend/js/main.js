@@ -18,6 +18,10 @@ let currentAnime = null;
 let currentDayFilter = 'all';
 let currentContentType = 'airing'; // 'finished' o 'airing'
 
+// Variables compartidas con player.js (¡ES IMPRESCINDIBLE!)
+let isHandlingPopState = false; // Bandera para evitar bucles en el historial
+let playerModalOpen = false;    // Estado del modal del reproductor
+
 // ========================================
 // DOM Elements
 // ========================================
@@ -649,9 +653,7 @@ function backToAnimes() {
     currentAnime = null;
     
     // Eliminar hash del anime del historial
-    if (window.location.hash.startsWith('#anime-')) {
-        history.replaceState({ page: 'main' }, '', window.location.pathname);
-    }
+    history.replaceState({ page: 'main' }, '', window.location.pathname);
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
