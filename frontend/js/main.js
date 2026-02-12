@@ -703,18 +703,29 @@ function setupTypeSelector() {
     if (finishedBtn && airingBtn) {
         finishedBtn.addEventListener('click', () => {
             if (currentContentType === 'finished') return;
-            finishedBtn.classList.remove('active');
-            finishedBtn.classList.add('finished');
-            airingBtn.classList.remove('airing');
-            airingBtn.classList.add('active', 'airing');
-            loadContentByType('finished');
-        });
-        airingBtn.addEventListener('click', () => {
-            if (currentContentType === 'airing') return;
-            airingBtn.classList.remove('active');
-            airingBtn.classList.add('airing');
+            
+            // Quitar clases del botón de emisión
+            airingBtn.classList.remove('active', 'airing');
+            airingBtn.classList.add('finished');
+            
+            // Añadir clases al botón de finalizados
             finishedBtn.classList.remove('finished');
             finishedBtn.classList.add('active', 'finished');
+            
+            loadContentByType('finished');
+        });
+        
+        airingBtn.addEventListener('click', () => {
+            if (currentContentType === 'airing') return;
+            
+            // Quitar clases del botón de finalizados
+            finishedBtn.classList.remove('active', 'finished');
+            finishedBtn.classList.add('airing');
+            
+            // Añadir clases al botón de emisión
+            airingBtn.classList.remove('finished');
+            airingBtn.classList.add('active', 'airing');
+            
             loadContentByType('airing');
         });
     }
