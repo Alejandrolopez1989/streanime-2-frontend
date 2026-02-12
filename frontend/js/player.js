@@ -26,9 +26,14 @@ async function openSecurePlayer(animeName, episodeNum, seasonNum, animeId) {
         
         const { token } = await tokenRes.json();
         
-        // 2. Abrir iframe con el token (el iframe NO verá la URL real)
+        // 2. Abrir iframe con el token
         const iframeUrl = `/player.html?token=${encodeURIComponent(token)}&eid=${encodeURIComponent(episodeId)}&title=${encodeURIComponent(`${animeName} - Episodio ${episodeNum}`)}`;
         playerIframe.src = iframeUrl;
+        
+        // 3. Agregar hash al historial
+        if (!window.location.hash.includes('#player-')) {
+            history.pushState({ page: 'player' }, '', `#player-${animeId}-${seasonNum}-${episodeNum}`);
+        }
         
     } catch (error) {
         console.error('Error:', error);
@@ -46,6 +51,11 @@ function closePlayer() {
     
     playerIframe.src = '';
     playerModal.style.display = 'none';
+    
+    // Eliminar hash del player SIN agregar nuevo estado
+    if (window.location.hash.startsWith('#player-')) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
 }
 
 // ========================================
@@ -66,6 +76,24 @@ function setupEpisodeClicks() {
         }
     });
 }
+
+// ========================================
+// CERRAR CON TECLA ESCAPE
+// ========================================
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && document.getElementById('playerModal').style.display === 'flex') {
+        closePlayer();
+    }
+});
+
+// ========================================
+// CERRAR AL HACER CLIC FUERA DEL MODAL
+// ========================================
+document.getElementById('playerModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePlayer();
+    }
+});
 
 // ========================================
 // INICIALIZAR
