@@ -18,6 +18,10 @@ let currentAnime = null;
 let currentDayFilter = 'all';
 let currentContentType = 'airing'; // 'finished' o 'airing'
 
+// Variables compartidas con player.js (¡ES IMPRESCINDIBLE!)
+let isHandlingPopState = false; // Bandera para evitar bucles en el historial
+let playerModalOpen = false;    // Estado del modal del reproductor
+
 // ========================================
 // DOM Elements
 // ========================================
@@ -511,7 +515,7 @@ async function showAnimeDetail(animeId) {
     document.getElementById('animeDetailEpisodes').textContent = 
         `${totalEpisodes} Episodio${totalEpisodes > 1 ? 's' : ''}`;
 
-    // CORREGIDO: Mostrar imagen del anime SIN optional chaining
+    // Mostrar imagen del anime
     const posterImg = document.getElementById('animeDetailPoster');
     if (posterImg && anime.image) {
         posterImg.src = anime.image;
@@ -647,7 +651,10 @@ function backToAnimes() {
     animeDetailSection.style.display = 'none';
     breadcrumb.style.display = 'none';
     currentAnime = null;
+    
+    // Eliminar hash del anime del historial
     history.replaceState({ page: 'main' }, '', window.location.pathname);
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -826,23 +833,23 @@ function setupBackToTop() {
 // Configurar manejo del historial
 function setupHistoryManagement() {
     window.addEventListener('popstate', function(event) {
+        // Si estamos en la página de detalle, volver al listado
         if (document.body.classList.contains('detail-page')) {
             backToAnimes();
+            return;
         }
     });
 
+    // Manejar carga inicial con hash
     if (window.location.hash && window.location.hash.startsWith('#anime-')) {
         const animeId = window.location.hash.replace('#anime-', '');
         setTimeout(() => {
             const anime = allAnimes.find(a => a.id === animeId);
             if (anime) {
-                history.replaceState({ page: 'detail', animeId: animeId }, '', `#anime-${animeId}`);
                 showAnimeDetail(animeId);
             }
-        }, 500);
+        }, 300);
     }
-
-    history.replaceState({ page: 'main' }, '', window.location.pathname);
 }
 
 // ========================================
